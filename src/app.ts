@@ -7,7 +7,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.status(200).json({
         status: 'true',
-        message: 'Welcome to Student Folio Backend'
+        message: 'Welcome to Student Folio Backend Development'
     });
 });
 
