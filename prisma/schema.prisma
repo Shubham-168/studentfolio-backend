@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Parent {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  phone     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  children  Child[]
+  reminders Reminder[]
+}
+
+model Child {
+  id       Int @id @default(autoincrement())
+  parentId Int
+
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      String
+  bloodGroup  String?
+  schoolName  String?
+  className   String?
+  section     String?
+  rollNumber  String?
+  photo       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent          Parent           @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  academicRecords AcademicRecord[]
+  certificates    Certificate[]
+  medicalRecords  MedicalRecord[]
+  growthRecords   GrowthRecord[]
+  gallery         Gallery[]
+  documents       Document[]
+}
+
+model AcademicRecord {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  academicYear String
+  className    String
+  examType     String
+  percentage   Float?
+  grade        String?
+  remarks      String?
+  documentUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  child    Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  subjects Subject[]
+}
+
+model Subject {
+  id               Int @id @default(autoincrement())
+  academicRecordId Int
+
+  name          String
+  marksObtained Float
+  maximumMarks  Float
+
+  academicRecord AcademicRecord @relation(fields: [academicRecordId], references: [id], onDelete: Cascade)
+}
+
+model Certificate {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  title          String
+  issuedBy       String?
+  issueDate      DateTime?
+  description    String?
+  certificateUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model MedicalRecord {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  recordType   String
+  recordDate   DateTime
+  doctorName   String?
+  hospitalName String?
+  notes        String?
+  documentUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model GrowthRecord {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  recordDate DateTime
+  height     Float?
+  weight     Float?
+
+  createdAt DateTime @default(now())
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model Gallery {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  imageUrl String
+  caption  String?
+
+  createdAt DateTime @default(now())
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id      Int @id @default(autoincrement())
+  childId Int
+
+  title        String
+  documentType String
+  fileUrl      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model Reminder {
+  id       Int @id @default(autoincrement())
+  parentId Int
+
+  title        String
+  description  String?
+  reminderDate DateTime
+  completed    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+}
