@@ -8,7 +8,9 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
 
-    PORT: z.coerce.number().positive().default(5000),
+    PORT: z.coerce.number().positive().default(4000),
+    
+    DATABASE_URL: z.string().min(1),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
