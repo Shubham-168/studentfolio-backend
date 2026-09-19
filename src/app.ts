@@ -5,7 +5,7 @@ import morgan from "morgan";
 
 import router from "./routes";
 import { notFound } from "./middlewares/notFound.middleware";
-import { errorHandler } from "./middlewares/error.middleware";
+import { errorMiddleware } from "./middlewares/error.middleware";
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use("/api/v1", router);
 
 app.use(notFound);
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 
 export default app;
