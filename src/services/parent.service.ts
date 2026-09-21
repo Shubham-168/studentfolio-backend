@@ -26,3 +26,23 @@ export const createParent = async (data: {
         password: hashedPassword,
     });
 };
+
+
+export const getAllParents = async (
+    page: number,
+    limit: number
+) => {
+
+    const skip = (page - 1) * limit;
+    return parentRepository.findAllParents(skip, limit);
+}
+
+export const getParentById = async (id: number) => {
+    const parent = await parentRepository.findParentById(id);
+
+    if (!parent) {
+        throw new AppError("Parent not found", 404);
+    }
+
+    return parent;
+}

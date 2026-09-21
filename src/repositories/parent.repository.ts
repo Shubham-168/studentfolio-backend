@@ -31,3 +31,47 @@ export const createParent = async (data: {
         },
     });
 };
+
+
+
+export const findAllParents = async (
+    skip: number,
+    take: number
+) => {
+    return prisma.parent.findMany({
+        skip,
+        take,
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            avatar: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
+
+
+export const findParentById = async (id: number) => {
+    return prisma.parent.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            avatar: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    })
+}
