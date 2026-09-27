@@ -3,6 +3,7 @@ import { createParentSchema } from '../validators/parent.validator';
 import * as parentService from '../services/parent.service';
 import { success } from 'zod';
 import { AppError } from '../utils/AppError';
+import { paginationSchema } from '../validators/pagination.validator';
 
 export const createParent = async (
     req: Request,
@@ -29,8 +30,7 @@ export const getAllParents = async (
     next: NextFunction
 ) => {
     try {
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
+        const {page, limit} = await paginationSchema.parse(req.query);
 
         if (page < 1 || limit < 1) {
             throw new AppError(
@@ -46,7 +46,7 @@ export const getAllParents = async (
             );
         }
 
-        const parents = await parentService.getAllParents(
+        const result = await parentService.getAllParents(
             page,
             limit
         );
@@ -54,8 +54,9 @@ export const getAllParents = async (
         res.status(200).json({
             success: 'true',
             message: 'Parents fetched successfully',
-            data: parents
-        })
+            data: result?.parents,
+            pagination: result?.pagination,
+        });
 
     } catch (error) {
         next(error)

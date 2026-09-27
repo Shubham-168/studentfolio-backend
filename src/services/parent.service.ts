@@ -34,7 +34,22 @@ export const getAllParents = async (
 ) => {
 
     const skip = (page - 1) * limit;
-    return parentRepository.findAllParents(skip, limit);
+
+    const {parents, total} = await parentRepository.findAllParents(skip, limit);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+        parents,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        },
+    };
 }
 
 export const getParentById = async (id: number) => {
