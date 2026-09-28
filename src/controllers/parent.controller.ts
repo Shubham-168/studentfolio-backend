@@ -4,6 +4,7 @@ import * as parentService from '../services/parent.service';
 import { success } from 'zod';
 import { AppError } from '../utils/AppError';
 import { paginationSchema } from '../validators/pagination.validator';
+import { updateParentSchema } from '../validators/parent-update.validator';
 
 export const createParent = async (
     req: Request,
@@ -86,3 +87,32 @@ export const getParentById = async (
         next(error);
     }
 };
+
+
+export const updateParent  = async(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    try{
+        const id = Number(req.params.id);
+
+        if (Number.isNaN(id)){
+            throw new AppError("Invalid Parent ID", 400);
+        }
+
+        const data = updateParentSchema.parse(req.body);
+
+        const parent  =  await parentService.updateParent(id, data);
+
+        res.status(200).json({
+            success: true,
+            message: 'Parent updated successfully',
+            data: parent,
+        });
+
+
+    }catch(error){
+        next(error)
+    }
+}

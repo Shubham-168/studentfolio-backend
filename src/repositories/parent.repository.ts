@@ -84,3 +84,35 @@ export const findParentById = async (id: number) => {
         },
     })
 }
+
+export const updateParent = async (
+    id: number,
+    data: {
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+        phone?: string;
+        avatar?: string;
+        password?: string;
+    }
+) => {
+    return prisma.parent.update({
+        where: {
+            id,
+        },
+
+        data,
+
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            avatar: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    })
+}
+
