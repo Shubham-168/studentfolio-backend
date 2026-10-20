@@ -1,4 +1,3 @@
-import { email } from "zod";
 import { prisma } from "../config/database";
 
 export const findParentByEmail = async (email: string) => {
@@ -40,8 +39,13 @@ export const findAllParents = async (
 ) => {
     const [parents, total] = await Promise.all([
         prisma.parent.findMany({
+            where: {
+                isDeleted: false,
+            },
+
             skip,
             take,
+
             select: {
                 id: true,
                 firstName: true,
@@ -52,12 +56,17 @@ export const findAllParents = async (
                 createdAt: true,
                 updatedAt: true,
             },
+
             orderBy: {
                 createdAt: "desc",
             },
         }),
 
-        prisma.parent.count()
+        prisma.parent.count({
+            where: {
+                isDeleted: false,
+            },
+        })
     ]);
 
     return {
@@ -68,9 +77,10 @@ export const findAllParents = async (
 
 
 export const findParentById = async (id: number) => {
-    return prisma.parent.findUnique({
+    return prisma.parent.findFirst({
         where: {
             id,
+            isDeleted: false,
         },
         select: {
             id: true,
@@ -116,3 +126,20 @@ export const updateParent = async (
     })
 }
 
+
+export const softDeleteParent = async (id: number) => {
+    return prisma.parent.update({
+        where: {
+            id,
+        },
+        data: {
+            isDeleted: true,
+        },
+        select: {
+            id: true,
+            email: true,
+            isDeleted: true,
+            updatedAt: true,
+        },
+    });
+};

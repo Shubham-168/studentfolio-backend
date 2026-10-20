@@ -101,3 +101,14 @@ export const updateParent = async (
 
     return parentRepository.updateParent(id, data);
 };
+
+export const deleteParent = async (id: number) => {
+    const existingParent =
+        await parentRepository.findParentById(id);
+
+    if (!existingParent) {
+        throw new AppError("Parent not found", 404);
+    }
+
+    return parentRepository.softDeleteParent(id);
+};

@@ -31,7 +31,7 @@ export const getAllParents = async (
     next: NextFunction
 ) => {
     try {
-        const {page, limit} = await paginationSchema.parse(req.query);
+        const { page, limit } = await paginationSchema.parse(req.query);
 
         if (page < 1 || limit < 1) {
             throw new AppError(
@@ -89,21 +89,21 @@ export const getParentById = async (
 };
 
 
-export const updateParent  = async(
+export const updateParent = async (
     req: Request,
     res: Response,
     next: NextFunction,
 ) => {
-    try{
+    try {
         const id = Number(req.params.id);
 
-        if (Number.isNaN(id)){
+        if (Number.isNaN(id)) {
             throw new AppError("Invalid Parent ID", 400);
         }
 
         const data = updateParentSchema.parse(req.body);
 
-        const parent  =  await parentService.updateParent(id, data);
+        const parent = await parentService.updateParent(id, data);
 
         res.status(200).json({
             success: true,
@@ -112,7 +112,40 @@ export const updateParent  = async(
         });
 
 
-    }catch(error){
+    } catch (error) {
         next(error)
     }
 }
+
+export const deleteParent = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const id = Number(req.params.id);
+
+        if (Number.isNaN(id)) {
+            throw new AppError(
+                "Invalid parent ID",
+                400
+            );
+        }
+
+        await parentService.deleteParent(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Parent deleted successfully",
+        });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Delete parent error:", error.name);
+            console.error("Delete parent message:", error.message);
+        } else {
+            console.error("Delete parent error:", String(error));
+        }
+
+        next(error);
+    }
+};
