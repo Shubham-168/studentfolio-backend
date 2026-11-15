@@ -1,3 +1,4 @@
+import { email } from "zod";
 import { prisma } from "../config/database";
 
 export const findParentByEmail = async (email: string) => {
@@ -139,6 +140,27 @@ export const softDeleteParent = async (id: number) => {
             id: true,
             email: true,
             isDeleted: true,
+            updatedAt: true,
+        },
+    });
+};
+
+
+export const findActiveParentByEmail = async (email: string) => {
+    return prisma.parent.findFirst({
+        where: {
+            email,
+            isDeleted: false,
+        },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            password: true,
+            phone: true,
+            avatar: true,
+            createdAt: true,
             updatedAt: true,
         },
     });
