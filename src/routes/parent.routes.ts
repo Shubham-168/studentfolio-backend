@@ -1,22 +1,36 @@
 
 import { Router } from "express";
 
-import { createParent, getAllParents, getParentById, updateParent, deleteParent, } from "../controllers/parent.controller";
+import { createParent, getParentById, updateParent, deleteParent, } from "../controllers/parent.controller";
 
 import { authenticateParent } from "../middlewares/auth.middleware";
+import { authorizeParentAccess } from "../middlewares/authorize.middleware";
 
 const router = Router();
 
 // Public registration
 router.post("/", createParent);
 
-// Protected routes
-router.get("/", authenticateParent, getAllParents);
+// Protected parent-specific routes
+router.get(
+    "/:id",
+    authenticateParent,
+    authorizeParentAccess,
+    getParentById
+);
 
-router.get("/:id", authenticateParent, getParentById);
+router.patch(
+    "/:id",
+    authenticateParent,
+    authorizeParentAccess,
+    updateParent
+);
 
-router.patch("/:id", authenticateParent, updateParent);
-
-router.delete("/:id", authenticateParent, deleteParent);
+router.delete(
+    "/:id",
+    authenticateParent,
+    authorizeParentAccess,
+    deleteParent
+);
 
 export default router;
